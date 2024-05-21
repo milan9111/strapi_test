@@ -72,6 +72,9 @@
     "lastName": {
       "type": "string",
       "required": true
+    },
+    "api_key": {
+      "type": "string"
     }
   }
 }

@@ -23,5 +23,38 @@ module.exports = (plugin) => {
     },
   });
 
+  plugin.controllers.user.findApiKey = async (ctx) => {
+    const entry = await strapi.db
+      .query("plugin::users-permissions.user")
+      .findOne({
+        where: { api_key: ctx.params.id },
+      });
+    if (entry) {
+      ctx.response.body = {
+        success: true,
+        message: "Access to the virtual assistant is allowed!",
+      };
+      ctx.response.status = 200;
+    } else {
+      ctx.response.body = {
+        success: false,
+        message:
+          "Access to the virtual assistant is not allowed! The API key is incorrect!",
+      };
+      ctx.response.status = 403;
+    }
+  };
+
+  plugin.routes["content-api"].routes.push({
+    method: "GET",
+    path: "/user/api-key/:id",
+    handler: "user.findApiKey",
+    config: {
+      auth: false,
+      prefix: "",
+      policies: [],
+    },
+  });
+
   return plugin;
 };
