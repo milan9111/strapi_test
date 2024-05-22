@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 module.exports = (plugin) => {
   plugin.controllers.user.updateMe = async (ctx) => {
     if (!ctx.state.user || !ctx.state.user.id) {
@@ -49,6 +51,53 @@ module.exports = (plugin) => {
     method: "GET",
     path: "/user/api-key/:id",
     handler: "user.findApiKey",
+    config: {
+      auth: false,
+      prefix: "",
+      policies: [],
+    },
+  });
+
+  plugin.controllers.user.sendAssistantMessage = async (ctx) => {
+    const { message = "" } = ctx.request.body;
+
+    if (!message.length) {
+      return (ctx.response.status = 422);
+    }
+
+    try {
+      const result = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-4",
+          messages: [{ role: "user", content: message }],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.GPT_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      ctx.response.body = {
+        success: true,
+        message: result.data.choices[0].message.content,
+      };
+      ctx.response.status = 200;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      ctx.response.body = {
+        success: false,
+        message: "Error: Something went wrong! Try again, please!",
+      };
+      ctx.response.status = 401;
+    }
+  };
+
+  plugin.routes["content-api"].routes.push({
+    method: "POST",
+    path: "/user/assistant/message",
+    handler: "user.sendAssistantMessage",
     config: {
       auth: false,
       prefix: "",
