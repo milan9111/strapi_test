@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "dialogs",
+  "info": {
+    "singularName": "dialog",
+    "pluralName": "dialogs",
+    "displayName": "Dialog",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "content": {
+      "type": "component",
+      "repeatable": true,
+      "component": "dialog-content.dialog-content"
+    }
+  }
+}

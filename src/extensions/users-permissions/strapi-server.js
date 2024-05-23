@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require("axios");
 
 module.exports = (plugin) => {
   plugin.controllers.user.updateMe = async (ctx) => {
@@ -31,15 +31,38 @@ module.exports = (plugin) => {
       .findOne({
         where: { api_key: ctx.params.id },
       });
+
     if (entry) {
+      const dialogs = await strapi.entityService.findMany(
+        "api::dialog.dialog",
+        {
+          populate: {
+            content: {
+              fields: ["id", "author", "message", "date"],
+            },
+            user: {
+              fields: ["id"],
+            },
+          },
+          filters: {
+            user: {
+              api_key: ctx.params.id,
+            },
+          },
+          sort: { id: 'desc' },
+        }
+      );
+
       ctx.response.body = {
         success: true,
+        dialogs: dialogs,
         message: "Access to the virtual assistant is allowed!",
       };
       ctx.response.status = 200;
     } else {
       ctx.response.body = {
         success: false,
+        dialogs: [],
         message:
           "Access to the virtual assistant is not allowed! The API key is incorrect!",
       };

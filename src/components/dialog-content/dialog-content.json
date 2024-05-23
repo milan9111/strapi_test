@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_dialog_content_dialog_contents",
+  "info": {
+    "displayName": "Dialog_content",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "message": {
+      "type": "text"
+    },
+    "date": {
+      "type": "biginteger"
+    },
+    "author": {
+      "type": "integer"
+    }
+  }
+}
