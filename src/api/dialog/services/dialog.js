@@ -1,38 +1,43 @@
-'use strict';
+"use strict";
 
 /**
  * dialog service
  */
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const { createCoreService } = require("@strapi/strapi").factories;
 
-module.exports = createCoreService('api::dialog.dialog', ({strapi}) => ({
-    async update(id, newMessage) {
-        const dialog = await strapi.entityService.findOne(
-          "api::dialog.dialog",
-          id,
-          {
-            populate: ['content'],
-          }
-        );
+module.exports = createCoreService("api::dialog.dialog", ({ strapi }) => ({
+  async update(id, newMessage) {
+    const dialog = await strapi.entityService.findOne(
+      "api::dialog.dialog",
+      id,
+      {
+        populate: ["content"],
+      }
+    );
 
-        if (!dialog) {
-            throw new Error('Dialog not found');
-        }
-    
-        dialog.content.unshift(newMessage);
+    if (!dialog) {
+      throw new Error("Dialog not found");
+    }
 
-        const updatedDialog = await strapi.entityService.update(
-            "api::dialog.dialog",
-            id,
-            {
-              data: {
-                content: dialog.content,
-              },
-              populate: ['content'],
-            },
-          );
+    dialog.content.unshift(newMessage);
 
-        return updatedDialog;
-      },
+    const updatedDialog = await strapi.entityService.update(
+      "api::dialog.dialog",
+      id,
+      {
+        data: {
+          content: dialog.content,
+        },
+        populate: {
+          content: {
+            fields: ["id", "author", "message", "date"],
+            sort: "id",
+          },
+        },
+      }
+    );
+
+    return updatedDialog;
+  },
 }));
