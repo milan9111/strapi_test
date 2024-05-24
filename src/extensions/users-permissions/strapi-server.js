@@ -39,6 +39,7 @@ module.exports = (plugin) => {
           populate: {
             content: {
               fields: ["id", "author", "message", "date"],
+              sort: 'id',
             },
             user: {
               fields: ["id"],
