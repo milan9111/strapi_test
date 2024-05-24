@@ -41,9 +41,6 @@ module.exports = (plugin) => {
               fields: ["id", "author", "message", "date"],
               sort: 'id',
             },
-            user: {
-              fields: ["id"],
-            },
           },
           filters: {
             user: {
@@ -57,6 +54,7 @@ module.exports = (plugin) => {
       ctx.response.body = {
         success: true,
         dialogs: dialogs,
+        user_id: entry.id,
         message: "Access to the virtual assistant is allowed!",
       };
       ctx.response.status = 200;
@@ -64,6 +62,7 @@ module.exports = (plugin) => {
       ctx.response.body = {
         success: false,
         dialogs: [],
+        user_id: 0,
         message:
           "Access to the virtual assistant is not allowed! The API key is incorrect!",
       };
